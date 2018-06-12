@@ -1,6 +1,10 @@
 var request = require('request');
 var secret = require('./secret');
 var fs = require('fs');
+//repoOwner and repoName are now passed through cli
+
+var repoOwner = process.argv[2];
+var repoName = process.argv[3];
 
 //console.log("Welcome to the GitHub Avatar Downloader");
 
@@ -19,7 +23,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(repoOwner, repoName, function(err, result) {
   console.log("Errors:", err);
   //console.log("Result:", result);
   //Loops through each item in the result array
