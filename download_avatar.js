@@ -1,12 +1,11 @@
 var request = require('request');
 var secret = require('./secret');
 var fs = require('fs');
+
 //repoOwner and repoName are now passed through cli
 
 var repoOwner = process.argv[2];
 var repoName = process.argv[3];
-
-//console.log("Welcome to the GitHub Avatar Downloader");
 
 function getRepoContributors(repoOwner, repoName, cb) {
   var options = {
@@ -18,18 +17,22 @@ function getRepoContributors(repoOwner, repoName, cb) {
   };
 
   request(options, function(err, res, body) {
+    if(err){
+      console.log("Please enter a valid repo name and owner");
+    }
     var data = JSON.parse(body);
     cb(err, data);
   });
 }
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
-  console.log("Errors:", err);
-  //console.log("Result:", result);
+  if(err){
+    console.log("Make sure you entered a proper repo name and owner", err);
+  }
   //Loops through each item in the result array
   for(var item of result){
     console.log('Avatar Url:', item.avatar_url);
-    //calls function, passes each avatar url as url, and item>.login as names for the avatars downloaded
+    //Passes each avatar url and item.login as names for the jpgs downloaded
     downloadImageByURL(item.avatar_url, "avatars/" + item.login + '.jpg');
   }
 });
@@ -41,7 +44,7 @@ function downloadImageByURL(url, filePath) {
           throw err;
          })
          .on('response', function (response) {
-          console.log('Response Status Code: ', response.statusCode)
+          console.log('Avatar downloaded.');
          })
          .pipe(fs.createWriteStream(filePath));
 }
